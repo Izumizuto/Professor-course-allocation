@@ -1,0 +1,188 @@
+\documentclass{article}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
+\begin{document}
+
+\section*{Introduction}
+Optimization of the University Course Assignment System involves categorizing \(n\) faculty members within a department into three distinct groups: \(x1\), \(x2\), and \(x3\). Faculty in each category are assigned different course loads, with \(x1\) handling 0.5 courses per semester, \(x2\) taking 1 course per semester, and \(x3\) managing a maximum of 1.5 courses per semester. The primary objective is to develop an assignment scheme that maximizes the number of courses assigned to faculty while aligning with their preferences and the category-based constraints.
+
+\section*{Methodology}
+\subsection*{Key Steps}
+\begin{enumerate}
+  \item Read professor preferences and courses: The code reads professor preferences and available courses from input files.
+  \item Initialize data structures: The code initializes a map to track assigned courses sum for each professor and a map to track available courses and their assigned sum.
+  \item Assign courses to professors: The code assigns courses to professors in a prioritized manner based on their category (x1, x2, or x3) and their remaining assignment quota.
+  \item Write assignments to output file: The code writes the assigned courses for each professor to an output file.
+\end{enumerate}
+
+\subsection*{Specific Considerations}
+\begin{itemize}
+  \item The code prioritizes assigning courses (0.5 assignment) to professors of category \(x1\), then prioritizes assigning courses (1.0 assignment) to professors of category \(x2\) and then prioritizes assigning courses (0.5+1.0 assignment) to professors in \(x3\) category.
+  \item For professors in the \(x2\) category, the code allows assigning 1 full course only.
+  \item For professors in the \(x3\) category, the code allows assigning 1.5 courses by combining a full course and a half course.
+  \item If code assigns a half course to any professor, then it will make sure that course will not be left half assigned; it will assign the other half of the course to another professor.
+\end{itemize}
+
+\section*{Algorithm}
+Firstly include necessary C++ libraries.
+
+\subsection*{Read Professor Preferences}
+The program begins by reading professors' preferences from the "professors.txt" file. Each line contains a professor's name followed by their category and their course preferences.
+
+\subsection*{Read Courses}
+The program then reads all available courses from the "courses.txt" file, storing them in a map called coursesMap, where the key is the course name, and the value is the sum assigned for that course (initialized to 1.0).
+
+\subsection*{Initialize Data Structures}
+Data structures are employed to organize and manage information within the program. The key data structures include:
+\begin{itemize}
+  \item professors: A vector containing the names of professors, populated by reading the "professors.txt" file.
+  \item preferences: A vector of vectors storing the course preferences for each professor. The preferences are also read from the "professors.txt" file.
+  \item coursesMap: A map where the key is the course name, and the value represents the sum assigned for that course (initialized to 1.0). This map is used to keep track of the availability of courses.
+  \item professorAssignments: A map tracking the sum of courses assigned to each professor. The key is the professor's name, and the value is the cumulative sum of assigned courses (initialized to 0.0). This map is used to keep track of the sum already assigned to the professor.
+\end{itemize}
+
+\subsection*{Assignment Algorithm}
+The \texttt{assignCourses} function is defined to assign courses to professors based on a set of criteria. The criteria involve assigning courses first to all professors of "x1" category, then assigning courses to all professors of "x2" category, then assigning courses to all professors of "x3" category.
+
+\subsection*{Assignment Loop (x1 category)}
+The program iterates through professors in the "x1" category and assigns half courses to each professor. If a course is assigned, it checks if another professor in the "x1" category or "x3" category can be assigned the remaining half (It ensures that no course remains half assigned).
+
+\subsection*{Assignment Loop (x2 category)}
+Professors in the "x2" category are assigned one course each.
+
+\subsection*{Assignment Loop (x3 category)}
+Professors in the "x3" category are assigned 1.5 courses. If a professor has already been assigned 0.5 courses, it assigns the remaining 1.0 courses. If a professor has not been assigned any courses, it assigns 1.5 courses, which involves assigning one course and searching for another professor in the "x3" category to assign the remaining half.
+
+\subsection*{Write Assignments to Output File}
+The program writes the course assignments to the "output.txt" file. It lists each professor along with the assigned courses, their respective weights (0.5 or 1.0), and the total sum of assigned weights.
+
+\subsection*{Output File}
+The final course assignments, along with the professors, are written to the "output.txt" file.
+
+\subsection*{Results under different Test Cases}
+courses.txt
+\\FDC1
+\\FDC2
+\\FDC3
+\\FDC4
+\\FDC5
+\\FDC6
+\\FDE1
+\\FDE2
+\\FDE3
+\\FDE4
+\\FDE5
+\\HDC1
+\\HDC2
+\\HDC3
+\\HDC4
+\\HDC5
+\\HDC6
+\\HDE1
+\\HDE2
+\\HDE3
+\\HDE4
+\break
+\break
+professors.txt
+\\Prof01  x1 FDC2 FDC3 FDC5 FDC6 HDC1 HDC4 HDC6 HDC3 FDE1 FDE3 HDE2 HDE4
+\\Prof02  x2 FDC1 FDC6 FDC3 FDC4 HDC1 HDC3 HDC2 HDC4 FDE4 FDE1 HDE2 HDE3 
+\\Prof03  x3 FDC6 FDC1 FDC4 FDC2 HDC2 HDC1 HDC5 HDC2 FDE2 FDE3 HDE3 HDE2
+\\prof04  x1 FDC3 FDC4 FDC1 FDC5 HDC1 HDC4 HDC6 HDC3 FDE1 FDE3 HDE2 HDE3
+\\prof05  x2 FDC4 FDC5 FDC6 FDC1 HDC1 HDC3 HDC2 HDC5 FDE4 FDE3 HDE4 HDE1
+\\prof06  x3 FDC2 FDC6 FDC3 FDC2 HDC1 HDC5 HDC2 HDC3 FDE3 FDE1 HDE3 HDE4
+\\prof07  x3 FDC1 FDC3 FDC5 FDC4 HDC2 HDC1 HDC3 HDC4 FDE1 FDE2 HDE4 HDE1
+\\prof08  x2 FDC5 FDC4 FDC2 FDC3 HDC1 HDC5 HDC4 HDC3 FDE1 FDE3 HDE2 HDE1
+\\prof09  x1 FDC1 FDC2 FDC4 FDC3 HDC4 HDC3 HDC5 HDC1 FDE2 FDE4 FDE1 HDE4 HDE2
+\\prof10  x2 FDC6 FDC3 FDC5 FDC2 HDC1 HDC4 HDC6 HDC3 FDE1 FDE3 FDE2 HDE3 HDE4
+\\prof11  x2 FDC1 FDC2 FDC3 FDC4 HDC4 HDC3 HDC2 HDC1 FDE1 FDE2 HDE3 HDE4 
+prof12  x1 FDC4 FDC3 FDC5 FDC6 FDC3 HDC1 HDC4 HDC6 HDC3 FDE4 FDE2 HDE2 HDE3
+\\prof13  x1 FDC6 FDC3 FDC4 FDC3 HDC4 HDC3 HDC2 HDC1 FDE1 FDE2 HDE3 HDE4 
+\\prof14  x3 FDC2 FDC1 FDC5 FDC4 HDC4 HDC2 HDC3 HDC1 FDE4 FDE1 HDE4 HDE2 
+\\prof15  x2 FDC3 FDC4 FDC6 FDC5 HDC4 HDC3 HDC2 HDC1 FDE1 FDE2 HDE3 HDE4 
+\\prof16  x2 FDC4 FDC6 FDC5 FDC2 HDC1 HDC3 HDC2 HDC5 FDE4 FDE2 HDE2 HDE1
+\\prof17  x3 FDC5 FDC2 FDC4 FDC3 HDC2 HDC3 HDC5 HDC1 FDE4 FDE2 FDE4 FDE5 HDE4 HDE2
+\\prof18  x1 FDC5 FDC4 FDC3 FDC2 HDC1 HDC3 HDC2 HDC5 FDE3 FDE1 HDE3 HDE4
+\\prof19  x2 FDC6 FDC2 FDC3 FDC1 HDC5 HDC2 HDC3 HDC6 FDE3 FDE1 HDE3 HDE2 
+\\prof20  x2 FDC1 FDC5 FDC3 FDC4 HDC1 HDC2 HDC4 HDC3 FDE2 FDE1 HDE4 HDE1
+\break
+\break
+output.txt
+\\Prof01 FDC2(0.5)   (sum=0.5)
+\\Prof02 FDC1(1.0)   (sum=1.0)
+\\Prof03 FDE3(1.0) HDE3(0.5)   (sum=1.5)
+\\prof04 FDC3(0.5)   (sum=0.5)
+\\prof05 FDC4(1.0)   (sum=1.0)
+\\prof06 HDE3(0.5) FDE1(1.0)   (sum=1.5)
+\\prof07 HDE4(1.0) HDE1(0.5)   (sum=1.5)
+\\prof08 HDC1(1.0)   (sum=1.0)
+\\prof09 FDC2(0.5)   (sum=0.5)
+\\prof10 HDC4(1.0)   (sum=1.0)
+\\prof11 HDC3(1.0)   (sum=1.0)
+\\prof12 FDC3(0.5)   (sum=0.5)
+\\prof13 FDC6(0.5)   (sum=0.5)
+\\prof14 FDE4(1.0) HDE2(0.5)   (sum=1.5)
+\\prof15 HDC2(1.0)   (sum=1.0)
+\\prof16 HDC5(1.0)   (sum=1.0)
+\\prof17 HDE2(0.5) FDE5(1.0)   (sum=1.5)
+\\prof18 FDC5(0.5)   (sum=0.5)
+\\prof19 HDC6(1.0)   (sum=1.0)
+\\prof20 FDE2(1.0)   (sum=1.0)
+\break
+\break
+
+
+
+
+
+
+\textbf{Category x1:} Initially assigns half courses to professors in the "x1" category. Example: Prof01 is assigned FDC2 (0.5), and the program searches for another professor to assign the remaining half. Prof04 is skipped as FDC2 is not in their preferences. Prof09 is identified as having FDC2 in their preferences and is assigned the remaining half (0.5).
+
+\textbf{Category x2:} Proceeds to assign one full course to professors in the "x2" category. Example: Prof02 is assigned FDC1 (1.0).
+
+\textbf{Category x3:} Assigns 1.5 courses to professors in the "x3" category, considering specific criteria. Example: Prof03 has an assigned sum of 0 (i.e., no assigned course). So Prof03 is assigned FDE3 (1.0) and HDE3 (0.5). Now the program searches for another professor to assign the remaining half of HDE3, and Prof06 is identified and assigned the other half (0.5). Now Prof06 has an assigned sum of 0.5 already; it assigns the remaining 1.0 full course FDE1(1.0).
+
+\subsection*{Crash Test and Stability Report}
+
+professors.txt
+\\Prof1 x1 FDC1 FDC2
+\\Prof2 x1 FDC1 FDC2 FDC3
+\\Prof3 x2 FDC4 FDC1 FDC2
+\\Prof4 x3 FDC5 FDC2 FDC3
+\\Prof5 x3 FDC1
+\break
+\break
+output.txt
+\\Prof1 FDC1(0.5)   (sum=0.5)
+\\Prof2 FDC1(0.5)   (sum=0.5)
+\\Prof3 FDC4(1.0)   (sum=1.0)
+\\Prof4 FDC5(1.0) FDC2(0.5)   (sum=1.5)
+\break
+\break
+We have taken a very simple test case to explain the possible cases of failure to assign courses to professors. Here as we can see professor5 has only 1 course in his preference list, that is FDC1. FDC1 is also the first in the priority list of professor1 and professor2. As the code starts running, FDC1 is allotted to both professors1 and 2, and hence the course is totally assigned. Hence the code is unable to assign professor5 the course FDC1, so professor5 goes unassigned.
+
+
+
+\subsection*{Limitations}
+\begin{itemize}
+  \item Professors in the x2 category are not able to fulfill their course assignment requirements by combining two half-course assignments.
+  \item Professors in the x3 category are not able to fulfill their course assignment requirements by combining three half-course assignments.
+\end{itemize}
+
+\subsection*{Future Improvements/Scope}
+\textbf{Enhanced Flexibility in Assignment Combinations:} The future scope of the project could involve modifying the assignment algorithm to allow professors in the "x2" category to combine two half-course assignments to fulfill their course requirements. Similarly, professors in the "x3" category could be given the flexibility to combine three half-course assignments.
+
+\textbf{Multiple Output Scenarios:} Enhance the program's capability to generate multiple possible allotments by reshuffling the lines of the "professors.txt" file.
+
+\end{document}

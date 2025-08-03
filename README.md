@@ -1,77 +1,141 @@
-Course Allocation System
-This is a C++ application that solves a course-to-professor assignment problem using the Ford-Fulkerson algorithm to find the maximum flow in a specially constructed graph. The system reads course and professor data from text files and outputs the optimal assignments to a new file.
+📚 Course Allocation Using Max Flow (Ford–Fulkerson)
+This project assigns courses to professors using the Ford–Fulkerson algorithm for maximum flow in a bipartite graph. It ensures that:
 
-How it Works
-The core of this project is a maximum flow algorithm applied to a bipartite graph. The graph is constructed as follows:
+Professors are assigned courses based on their teaching capacity.
 
-A source node (S) is connected to all professor nodes.
+Courses can be taught by a maximum of two professors.
 
-A sink node (T) is connected to all course nodes.
+Priority is given to partially filled courses before assigning new ones.
 
-Professor nodes are connected to the course nodes they are qualified to teach.
+🚀 Features
+Uses Ford–Fulkerson max flow to optimally assign courses.
 
-The capacities of the edges define the constraints:
+Supports different professor types (1-course, 2-course, or 3-course load).
 
-The capacity from the source node to each professor node is based on the professor's type, representing the number of courses they can teach.
+Reads input from files (professors_big.txt, courses_big.txt).
 
-The capacity from each professor node to a course node is 2, allowing a course to be "half-taught" by two professors if necessary.
+Outputs allocation results to output_big.txt.
 
-The capacity from each course node to the sink node is 2, ensuring that a course is taught by a maximum of two professors.
+Respects constraints: each course can have at most two professors.
 
-The fordFulkerson function calculates the maximum flow from the source to the sink. The flow on each edge between a professor and a course represents the assignment.
+📂 Input File Format
+1️⃣ courses_big.txt
+Each line contains a course name.
 
-Priority-based BFS
-A key feature of this implementation is the modification of the Breadth-First Search (BFS) to prioritize certain assignments. When searching for an augmenting path, the bfs function gives higher priority to courses that have already been partially assigned (flowPassed[v][MAX-1] == 1). This is intended to encourage the completion of partial assignments before starting new ones.
+nginx
+Copy
+Edit
+CSE101
+CSE102
+MTH101
+PHY101
+2️⃣ professors_big.txt
+First line: Three integers → number of professors with load 1, load 2, load 3.
 
-Getting Started
-Prerequisites
-A C++ compiler (like g++).
+Following lines:
 
-Input files named professors.txt and courses.txt in the same directory. You can also use the professors_big.txt and courses_big.txt provided in the code.
+Professor name and number of preferred courses.
 
-Input File Format
-courses.txt
-This file should contain a list of all available course names, with each name on a new line.
+Next line contains the list of course codes they are willing to teach.
 
-CourseA
-CourseB
-CourseC
-professors.txt
-The first line of this file should contain three integers: x1, x2, and x3, representing the number of professors of each type. Following this, each professor's entry consists of two lines:
+Example:
 
-The professor's name and the number of courses they are qualified to teach.
+Copy
+Edit
+2 2 1
+ProfA 2
+CSE101 MTH101
+ProfB 3
+CSE101 CSE102 PHY101
+ProfC 1
+PHY101
+ProfD 2
+MTH101 CSE102
+ProfE 1
+CSE102
+⚙️ How It Works
+Graph Representation
 
-A space-separated list of the course names they can teach.
+Source node (0) connects to professors (capacities = course load).
 
-1 1 1
-Professor1 2
-CourseA CourseB
-Professor2 1
-CourseB
-Professor3 1
-CourseA
-Compiling and Running
-Compile the code:
+Professors connect to preferred courses (capacity = 2).
 
-Bash
+Courses connect to sink node (MAX-1) (capacity = 2).
 
-g++ -std=c++11 -o course_allocator main.cpp
-Run the executable:
+Priority Allocation
 
-Bash
+Courses already partially assigned are prioritized for the next professor.
 
-./course_allocator
+Ford–Fulkerson Execution
+
+BFS finds augmenting paths.
+
+Residual capacities are updated.
+
+Maximum flow determines optimal assignment.
+
 Output
-The program will generate a file named output.txt containing the course assignments. Each line in the output file will specify which professor is teaching which course.
 
-Professor1 teaches CourseA
-Professor2 teaches CourseB
-Professor3 teaches CourseC
-Potential Improvements
-Command-line Arguments: Modify the code to accept input and output file names as command-line arguments instead of hardcoding them.
+Writes assigned professor–course pairs to output_big.txt.
 
-Error Handling: Add more robust error handling for file I/O, especially if the input files are not found or are improperly formatted.
+▶️ How to Run
+Compile & Run
+bash
+Copy
+Edit
+g++ -std=c++17 -O2 main.cpp -o allocation
+./allocation
+Expected Output
+Console shows max flow and debug info.
 
-Dynamic Sizing: Replace the hardcoded MAX value with a dynamic data structure (like std::vector) to handle a variable number of professors and courses.
+output_big.txt contains assignments:
 
-Alternative Algorithms: Explore other maximum flow algorithms like Edmonds-Karp or Dinic's algorithm, which might offer better performance on certain graph structures.
+python-repl
+Copy
+Edit
+ProfA teaches CSE101
+ProfB teaches CSE102
+ProfC teaches PHY101
+...
+📊 Example Flow
+With the example inputs:
+
+Max Flow: 5 (total assigned courses).
+
+Assignments:
+
+nginx
+Copy
+Edit
+ProfA teaches CSE101
+ProfB teaches CSE102
+ProfC teaches PHY101
+ProfD teaches MTH101
+ProfE teaches CSE102
+📝 Notes
+Adjust MAX constant if number of nodes > 500.
+
+Make sure professors_big.txt and courses_big.txt are in the same folder as the executable.
+
+For smaller datasets, replace file names inside main() with professors.txt and courses.txt.
+
+📌 Files in Repo
+bash
+Copy
+Edit
+├── main.cpp                # Core allocation logic
+├── professors_big.txt      # Professor preferences
+├── courses_big.txt         # List of courses
+├── output_big.txt          # Generated assignments
+└── README.md               # Documentation
+Do you want me to also include a diagram of the flow network (Source → Professors → Courses → Sink) in the README so it’s more visual for GitHub? It could make it stand out a lot more.
+
+
+
+
+
+
+
+
+
+Ask ChatGPT

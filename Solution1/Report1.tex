@@ -1,0 +1,123 @@
+\documentclass{article}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+Project By:
+\\Manas Tomar      2022A7PS1184G
+\\Narayan Agarwal  2022A7PS1191G
+\\Pratham Uppal    2022A7PS1231G
+
+\section*{Introduction}
+Optimization of the University Course Assignment System involves categorizing \(n\) faculty members within a department into three distinct groups: \(x_1\), \(x_2\), and \(x_3\). Faculty in each category are assigned different course loads, with \(x_1\) handling 0.5 courses per semester, \(x_2\) taking 1 course per semester, and \(x_3\) managing a maximum of 1.5 courses per semester. The primary objective is to develop an assignment scheme that maximizes the number of courses assigned to faculty while aligning with their preferences and the category-based constraints.
+
+\section*{Methodology and Algorithm}
+
+Here the question has been formulated as an example of the Max flow rate problem. Many algorithms are used to solve the max flow rate algorithm, and we have used the Ford-Fulkerson Algorithm to solve it.
+
+\subsection*{Graph Representation}
+The algorithm creates a bipartite graph connecting professors to courses. The edges represent the teaching capacity of each professor for a specific course.
+
+\subsection*{Initialization}
+\begin{enumerate}
+    \item The capacities matrix is initialized with all zeros, and the flowPassed matrix is initialized as a copy of the capacities matrix.
+    \item Two maps, courseToNode and professorToNode, are created to map course and professor names to node indices.
+    \item The maximum node indices for professors (\(professorNode\)) and courses (\(courseNode\)) are initialized.
+\end{enumerate}
+
+\subsection*{Graph Construction}
+\begin{enumerate}
+    \item Courses are assigned node indices starting from \(MAX/2\) and are stored in the \(courseToNode\) map.
+    \item Professor information is read, and for each professor, edges are added from the source (node 0) to the courses they can teach. The capacities of these edges are set based on the professor's type.
+    \item Edges are added from professors to courses with capacities based on the maximum number of professors that can teach each course.
+    \item Edges are added from courses to the sink (node \(MAX-1\)) with a capacity of 2, indicating that each course can be taught by at most 2 professors.
+\end{enumerate}
+
+\subsection*{Ford-Fulkerson Algorithm}
+The Ford-Fulkerson algorithm is applied to find the maximum flow in the graph.
+\begin{enumerate}
+    \item The \(bfs\) function is used to find augmenting paths from the source to the sink.
+    \item The \(fordFulkerson\) function iteratively finds augmenting paths using BFS and updates the flow in the graph until no more augmenting paths are found.
+    \item The flow is updated based on the minimum residual capacity along the augmenting path.
+\end{enumerate}
+
+\subsection*{Output Generation}
+\begin{enumerate}
+    \item After computing the maximum flow, the algorithm iterates through the professors and the courses they can teach.
+    \item For each professor-course pair, if the flow on the edge is less than the capacity, it is considered as part of the maximum flow, and the assignment is written to the output file.
+\end{enumerate}
+
+\section*{Conclusion}
+The algorithm successfully assigns professors to courses, maximizing the overall teaching capacity based on the specified constraints. The resulting \texttt{output\_big.txt} file contains detailed information on which professor teaches which course, providing an optimal solution to the assignment problem.
+
+\section*{Results under Different Test Cases}
+Let's take the example of \texttt{professor.txt} as follows:
+
+\begin{verbatim}
+2 1 2
+professor1 12
+FDC2 FDC3 FDC5 FDC6 FDE1 FDE2 HDC1 HDC4 HDC6 HDC3 HDE4 HDE2
+professor2 14
+FDC4 FDC3 FDC5 FDC6 FDC7 FDE4 FDE2 HDC1 HDC4 HDC6 HDC3 HDE4 HDE2 HDE3
+professor3 12
+FDC6 FDC3 FDC5 FDC2 FDE3 FDE2 HDC1 HDC4 HDC6 HDC3 HDE4 HDE2
+professor4 13
+FDC1 FDC2 FDC3 FDC4 FDE1 FDE2 HDC5 HDC6 HDC7 HDC8 HDE3 HDE4 HDE5
+professor5 12
+FDC7 FDC8 FDC9 FDC10 FDE3 FDE4 HDC9 HDC10 HDC11 HDC12 HDE5 HDE6
+\end{verbatim}
+
+Here, \(2\), \(1\), \(2\) represents the number of professors of type \(x_1\), \(x_2\), and \(x_3\) respectively.
+
+We change the types of Courses and Professor to integers using \texttt{unordered\_map<string,int>}. Now they are represented as nodes. Nodes for professors start from 1, and so on. The above example takes numbers the professors 1 to 5. The number of Course nodes starts from \(MAX/2\). Here we initialized \(MAX\) as 500, so Course nodes are initialized from 250, 251, and so on. The source is connected to all professor nodes, and their max flows are given by 1 to 3. The max flow for professors of \(x_1\) category is given by 1, for \(x_2\) - 2, and for \(x_3\) - 3. These are put in place by \texttt{course\_prof\_graph(0).push\_back(professorNode)} in the code.
+
+Now, the course nodes are connected to the sink, and all of them are given a weight of 2. All Professor nodes and course nodes are joined by edges of weight 2 as well because every course can be taken by either one professor or two professors.
+
+Then our Main function class \texttt{fordFulkerson} from 0 to \(MAX-1\), i.e., 0 to 499. \texttt{FordFulkerson} calls \texttt{bfs} multiple times to find a path between source and sink, where \texttt{bfs} gives true when a path is found, and false if a path is not found.
+
+Inside the standard \texttt{bfs} loop, we start by giving higher priority to courses that have been distributed as half, despite their rank in the priority order, as when a course is given up as half, the rest of the course has to be distributed on top priority. As we can see in the above example of \texttt{input.txt}, professor3 taught FDC2 even though it is ranked 4 in the priority list because the previous loops will create a path from source to sink through professor1 and allot him FDC2 (0.5) as it is his first priority. So now the remaining FDC2 (0.5) still flows of 1 left through the course FDC2 to sink. This is taken up in the loop in BFS which prioritizes the assignment of FDC2 to professor regardless of its place in the preference list. Similarly, the flow is mapped for all professors through courses and to sink. Any edge that has a flow less than max weight for that edge is taken to be assigned. This helps in producing the following output:
+
+\texttt{output.txt}
+\begin{verbatim}
+professor1 teaches FDC2
+professor2 teaches FDC4
+professor3 teaches FDC6
+professor3 teaches FDC2
+professor4 teaches FDC1
+professor4 teaches FDC4
+professor5 teaches FDC7
+professor5 teaches FDC8
+\end{verbatim}
+
+\section*{Crash Test and Stability Report}
+We have taken a very simple test case to explain the possible cases of failure to assign courses to professors.
+
+\begin{verbatim}
+2 1 2
+professor1 2
+FDC1 FDC2
+professor2 3
+FDC1 FDC2 FDC3
+professor3 3
+FDC4 FDC1 FDC2
+professor4 3
+FDC5 FDC2 FDC3
+professor5 1
+FDC1
+\end{verbatim}
+
+Here, as we can see, professor5 has only 1 course in his preference list, that is, FDC1. FDC1 is also the first in the priority list of professor1 and professor2. As code starts running, FDC1 is allotted to both professors1 and 2, and hence the course is totally assigned (flow through the edge from the course node to sink left is 0). Hence the code is unable to assign any path from source to sink through professor5 and FDC1, so professor5 goes unassigned.
+
+\texttt{output.txt}
+\begin{verbatim}
+professor1 teaches FDC1
+professor2 teaches FDC1
+professor3 teaches FDC4
+professor4 teaches FDC5
+professor4 teaches FDC2
+(professor5 goes unassigned)
+\end{verbatim}
+
+\end{document}

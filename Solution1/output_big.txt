@@ -1,0 +1,12 @@
+professor1 teaches FDC2
+professor2 teaches FDC4
+professor3 teaches FDC2
+professor4 teaches FDC4
+professor5 teaches FDC7
+professor6 teaches FDC8
+professor7 teaches FDC9
+professor8 teaches FDC6
+professor9 teaches FDC1
+professor9 teaches FDC3
+professor10 teaches FDC10
+professor10 teaches FDE3

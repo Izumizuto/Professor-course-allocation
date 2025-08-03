@@ -1,23 +1,23 @@
-# 📚 Course Allocation Using Max Flow (Ford–Fulkerson)
+# Course Allocation Using Max Flow (Ford–Fulkerson)
 
-This project assigns **courses to professors** using the **Ford–Fulkerson algorithm** for maximum flow in a bipartite graph. It ensures that:  
+This project assigns courses to professors using the Ford–Fulkerson algorithm for maximum flow in a bipartite graph. It ensures that:  
 - Professors are assigned courses based on their teaching capacity.  
 - Courses can be taught by a maximum of two professors.  
 - Priority is given to partially filled courses before assigning new ones.  
 
 ---
 
-## 🚀 Features
-- Uses **Ford–Fulkerson max flow** to optimally assign courses.  
-- Supports different **professor types** (1-course, 2-course, or 3-course load).  
+## Features
+- Uses Ford–Fulkerson max flow to optimally assign courses.  
+- Supports different professor types (1-course, 2-course, or 3-course load).  
 - Reads input from files (`professors_big.txt`, `courses_big.txt`).  
 - Outputs allocation results to `output_big.txt`.  
-- Respects constraints: each course can have at most **two professors**.
+- Respects constraints: each course can have at most two professors.
 
 ---
 
-## 📂 Input File Format
-### 1️⃣ `courses_big.txt`
+## Input File Format
+### courses_big.txt
 Each line contains a course name.
 ```
 CSE101
@@ -26,9 +26,9 @@ MTH101
 PHY101
 ```
 
-### 2️⃣ `professors_big.txt`
-- **First line**: Three integers → number of professors with load 1, load 2, load 3.
-- **Following lines**:  
+### professors_big.txt
+- First line: Three integers → number of professors with load 1, load 2, load 3.
+- Following lines:  
   - Professor name and number of preferred courses.
   - Next line contains the list of course codes they are willing to teach.
 
@@ -49,33 +49,33 @@ CSE102
 
 ---
 
-## ⚙️ How It Works
-1. **Graph Representation**  
-   - **Source node (0)** connects to professors (capacities = course load).  
+## How It Works
+1. Graph Representation  
+   - Source node (0) connects to professors (capacities = course load).  
    - Professors connect to preferred courses (capacity = 2).  
-   - Courses connect to **sink node (MAX-1)** (capacity = 2).  
+   - Courses connect to sink node (MAX-1) (capacity = 2).  
 
-2. **Priority Allocation**  
+2. Priority Allocation  
    - Courses already partially assigned are prioritized for the next professor.
 
-3. **Ford–Fulkerson Execution**  
+3. Ford–Fulkerson Execution  
    - BFS finds augmenting paths.  
    - Residual capacities are updated.  
    - Maximum flow determines optimal assignment.
 
-4. **Output**  
+4. Output  
    - Writes assigned professor–course pairs to `output_big.txt`.
 
 ---
 
-## ▶️ How to Run
-### **Compile & Run**
+## How to Run
+### Compile & Run
 ```bash
 g++ -std=c++17 -O2 main.cpp -o allocation
 ./allocation
 ```
 
-### **Expected Output**
+### Expected Output
 - Console shows max flow and debug info.  
 - `output_big.txt` contains assignments:
 ```
@@ -87,10 +87,10 @@ ProfC teaches PHY101
 
 ---
 
-## 📊 Example Flow
+## Example Flow
 With the example inputs:
-- **Max Flow**: `5` (total assigned courses).
-- **Assignments**:
+- Max Flow: `5` (total assigned courses).
+- Assignments:
 ```
 ProfA teaches CSE101
 ProfB teaches CSE102
@@ -101,14 +101,14 @@ ProfE teaches CSE102
 
 ---
 
-## 📝 Notes
+## Notes
 - Adjust `MAX` constant if number of nodes > 500.
-- Make sure `professors_big.txt` and `courses_big.txt` are in the **same folder** as the executable.
+- Make sure `professors_big.txt` and `courses_big.txt` are in the same folder as the executable.
 - For smaller datasets, replace file names inside `main()` with `professors.txt` and `courses.txt`.
 
 ---
 
-## 📌 Files in Repo
+## Files in Repo
 ```
 ├── main.cpp                # Core allocation logic
 ├── professors_big.txt      # Professor preferences
